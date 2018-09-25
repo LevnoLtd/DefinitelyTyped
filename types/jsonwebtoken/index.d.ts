@@ -1,4 +1,4 @@
-// Type definitions for jsonwebtoken 7.2.2
+// Type definitions for jsonwebtoken 7.2.3
 // Project: https://github.com/auth0/node-jsonwebtoken
 // Definitions by: Maxime LUCE <https://github.com/SomaticIT>,
 //                 Daniel Heim <https://github.com/danielheim>,
@@ -67,8 +67,8 @@ export interface VerifyOptions {
     jwtid?: string;
     subject?: string;
     /**
-     *@deprecated
-     *@member {string} - Max age of token
+     * @deprecated
+     * @member {string} - Max age of token
      */
     maxAge?: string;
 }
@@ -83,6 +83,10 @@ export interface VerifyCallback {
         err: VerifyErrors,
         decoded: object | string,
     ): void;
+}
+
+export interface secretOrPublicKeyCallback {
+    (header: object, callback: (err: any, secretOrPublicKey?: Secret) => void): void;
 }
 
 export interface SignCallback {
@@ -158,6 +162,25 @@ export declare function verify(
     options?: VerifyOptions,
     callback?: VerifyCallback,
 ): void;
+
+/**
+ * Asynchronously verify given token using a secret or a public key to get a decoded token
+ * @param {String} token - JWT string to verify
+ * @param {secretOrPublicKeyCallback} secretOrPublicKey - Function returning either the secret for HMAC algorithms, or the PEM encoded public key for RSA and ECDSA.
+ * @param {VerifyOptions} [options] - Options for the verification
+ * @param {Function} callback - Callback to get the decoded token on
+ */
+export declare function verify(
+    token: string,
+    secretOrPublicKey: secretOrPublicKeyCallback,
+    options: VerifyOptions,
+    callback: VerifyCallback
+) : void;
+export declare function verify(
+    token: string,
+    secretOrPublicKey: secretOrPublicKeyCallback,
+    callback: VerifyCallback
+) : void;
 
 /**
  * Returns the decoded payload without verifying if the signature is valid.

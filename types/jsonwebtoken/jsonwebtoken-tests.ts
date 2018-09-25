@@ -110,6 +110,25 @@ jwt.verify(token, cert, { ignoreExpiration: true }, function(err, decoded) {
     // if ignoreExpration == false and token is expired, err == expired token
 });
 
+
+// Verify using getKey callback
+// Example uses https://github.com/auth0/node-jwks-rsa as a way to fetch the keys.
+const jwksClient = require('jwks-rsa');
+const client = jwksClient({
+    jwksUri: 'https://sandrino.auth0.com/.well-known/jwks.json'
+});
+function getKey(header : string, callback){
+    client.getSigningKey(header.kid, function(err, key) {
+        var signingKey = key.publicKey || key.rsaPublicKey;
+        callback(null, signingKey);
+    });
+}
+
+jwt.verify(token, getKey, options, function(err, decoded) {
+    console.log(decoded.foo) // bar
+});
+
+
 /**
  * jwt.decode
  * https://github.com/auth0/node-jsonwebtoken#jwtdecodetoken
