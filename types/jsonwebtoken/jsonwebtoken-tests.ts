@@ -112,20 +112,11 @@ jwt.verify(token, cert, { ignoreExpiration: true }, function(err, decoded) {
 
 
 // Verify using getKey callback
-// Example uses https://github.com/auth0/node-jwks-rsa as a way to fetch the keys.
-const jwksClient = require('jwks-rsa');
-const client = jwksClient({
-    jwksUri: 'https://sandrino.auth0.com/.well-known/jwks.json'
-});
-function getKey(header : string, callback){
-    client.getSigningKey(header.kid, function(err, key) {
-        var signingKey = key.publicKey || key.rsaPublicKey;
-        callback(null, signingKey);
-    });
+function getKey(header : object, callback: (err: NodeJS.ErrnoException, result: Buffer) => void){
+    fs.readFile("public.pem", callback);
 }
-
-jwt.verify(token, getKey, options, function(err, decoded) {
-    console.log(decoded.foo) // bar
+jwt.verify(token, getKey, function(err, decoded) {
+    // check verification result
 });
 
 
